@@ -1,4 +1,6 @@
-(ns ninety_nine_clj.core)
+(ns ninety_nine_clj.core
+  (:use [clojure.math.combinatorics])
+  (:use [clojure.math.numeric-tower]))
 
 (defn my-last [col]
   (list (last col)))
@@ -66,4 +68,79 @@
   (rnd-select (my-range 1 m) n))
 
 (defn rnd-permu [col]
-  )
+  (let [p (permutations col)]
+    (nth p (rand-int (count p)))))
+
+(def combos combinations)
+
+(defn group3 [col]
+  (list (slice col 1 2) (slice col 3 5) (slice col 6 9)))
+
+(defn group [col sizes]
+  (if (empty? sizes)
+    ()
+    (cons (take (first sizes) col)
+          (group (drop (first sizes) col) (rest sizes)))))
+
+(defn make-sort [mf]
+  (fn [col] (sort (fn [x y] (< (mf x) (mf y))) col)))
+
+(def lsort (make-sort count))
+
+(defn lfsort [col]
+  ((make-sort (fn [s] (count (filter #(= % (count s))
+                                    (map count col)))))
+   col))
+
+(defn prime? [n]
+  (not (some #(zero? %)
+             (map #(mod n %)
+                  (range 2 (inc (/ n 2)))))))
+
+(def my-gcd gcd)
+(defn coprime [a b] (= 1 (gcd a b)))
+
+(defn totient-phi [n]
+  (count (filter identity
+                 (map #(coprime n %)
+                      (range 1 n)))))
+
+(defn primes-below [n]
+  (loop [vv (map inc (range 2 n)) acc ()]
+    (if (empty? vv)
+      (reverse acc)
+      (recur (remove #(zero? (mod % (first vv))) vv)
+             (cons (first vv) acc)))))
+
+(defn prime-factors [n]
+  (loop [pp (primes-below (/ n 2))
+         num n
+         acc ()]
+    (if (empty? pp)
+      (reverse acc)
+      (let [p (first pp)]
+        (if (zero? (mod num p))
+          (recur pp (/ num p) (cons p acc))
+          (recur (rest pp) num acc))))))
+
+(defn prime-factors-mult [n]
+  (map reverse (encode (prime-factors n))))
+
+(defn totient-phi-impr [n]
+  (reduce + (map (fn [s]
+                   (let [p (first s)
+                         m (second s)]
+                     (* (dec p)
+                        (expt p (dec m)))))
+                 (prime-factors-mult n))))
+
+(defn goldbach [n]
+  (let [pp (primes-below n)]
+    (first (filter #(= n (reduce + %))
+                   (cartesian-product pp pp)))))
+
+(defn goldbach-list [a b]
+  (map #(cons % (goldbach %))
+       (filter even?
+               (range a (inc b)))))
+
