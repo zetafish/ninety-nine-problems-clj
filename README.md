@@ -1,6 +1,9 @@
-# ninety-nine-clj
+# ninety-nine-problems-clj
 
-The project uses [Midje](https://github.com/marick/Midje/)).
+Solutions to the 99 Lisp problems as described
+[here](http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html).
+
+I use [Midje](https://github.com/marick/Midje/) to test the solutions
 
 ## How to run the tests
 
