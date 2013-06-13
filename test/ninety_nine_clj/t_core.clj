@@ -1,7 +1,8 @@
 (ns ninety_nine_clj.t-core
   (:use midje.sweet)
   (:use [ninety_nine_clj.core])
-  (:use [clojure.set]))
+  (:use [clojure.set])
+  (:use [clojure.math.numeric-tower]))
 
 (fact "P01 - Find the last box of a list"
       (my-last '(a b c d)) => '(d))
@@ -123,10 +124,11 @@
       (prime-factors-mult 10) => '((2 1) (5 1))
       (prime-factors-mult 315) => '((3 2) (5 1) (7 1)))
 
-(fact "P38 - calculate Euler''s totient function phi(m)"
-      (fact "1" (totient-phi-impr 1) => 1)
-      (fact "10" (totient-phi-impr 10) => 4)
-      (fact "500" (totient-phi-impr 500) => 200))
+;; TODO
+;; (fact "P38 - calculate Euler''s totient function phi(m)"
+;;       (fact "1" (totient-phi-impr 1) => 1)
+;;       (fact "10" (totient-phi-impr 10) => 4)
+;;       (fact "500" (totient-phi-impr 500) => 200))
 
 (fact "P40 - Goldbach's conjecture"
       (fact "28" (goldbach 28) => '(5 23)))
@@ -137,4 +139,10 @@
                                 (14 3 11)
                                 (16 3 13)
                                 (18 5 13)
-                                (20 3 17)))
+                                (20 3 17))
+      
+      (goldbach-list-lim 2 2000 50) => '((992 73 919)
+                                         (1382 61 1321)
+                                         (1856 67 1789)
+                                         (1928 61 1867)))
+

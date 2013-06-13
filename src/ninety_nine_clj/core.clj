@@ -103,25 +103,32 @@
 (defn totient-phi [n]
   (count (filter identity
                  (map #(coprime n %)
-                      (range 1 n)))))
+                      (range 1 (inc n))))))
 
 (defn primes-below [n]
-  (loop [vv (map inc (range 2 n)) acc ()]
+  (loop [vv (range 2 n) acc ()]
     (if (empty? vv)
       (reverse acc)
       (recur (remove #(zero? (mod % (first vv))) vv)
              (cons (first vv) acc)))))
 
+(let [pp (primes-below 5000)]
+  (defn primes-below [n]
+    (take-while #(< % n) pp)))
+
+
 (defn prime-factors [n]
-  (loop [pp (primes-below (/ n 2))
-         num n
-         acc ()]
-    (if (empty? pp)
-      (reverse acc)
-      (let [p (first pp)]
-        (if (zero? (mod num p))
-          (recur pp (/ num p) (cons p acc))
-          (recur (rest pp) num acc))))))
+  (if (= 1 n)
+    (list 1)
+    (loop [pp (primes-below (inc (/ n 2)))
+           num n
+           acc ()]
+      (if (empty? pp)
+        (reverse acc)
+        (let [p (first pp)]
+          (if (zero? (mod num p))
+            (recur pp (/ num p) (cons p acc))
+            (recur (rest pp) num acc)))))))
 
 (defn prime-factors-mult [n]
   (map reverse (encode (prime-factors n))))
@@ -143,4 +150,10 @@
   (map #(cons % (goldbach %))
        (filter even?
                (range a (inc b)))))
+
+(defn goldbach-list-lim [a b lim]
+  (filter (fn [s] (and (= 3 (count s))
+                      (> (nth s 1) lim)
+                      (> (nth s 2) lim)))
+          (goldbach-list a b)))
 
